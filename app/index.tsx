@@ -6,7 +6,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { Text, View, StyleSheet, ScrollView, Pressable, Platform } from "react-native";
-import {useHeaderHeight} from '@react-navigation/elements';
+import { useHeaderHeight } from '@react-navigation/elements';
+import { ProductShimmerGrid } from "@/components/ProductListShimmer";
 
 export default function Index() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -40,37 +41,48 @@ export default function Index() {
   }, []);
 
   return (
-    <View style={[styles.container, {marginTop: Platform.select({ios: headerHeight, android: 0})} ]}>
+    <View style={[styles.container, { marginTop: Platform.select({ ios: headerHeight, android: 0 }) }]}>
       <Stack.Screen
-        options={{headerSearchBarOptions: {onChangeText: 
-          (e) => setSearchQuery(e.nativeEvent.text)}}}
+        options={{
+          headerSearchBarOptions: {
+            onChangeText:
+              (e) => setSearchQuery(e.nativeEvent.text)
+          }
+        }}
       />
       <View style={styles.categoryContainer}>
         <ScrollView style={styles.categoryScrollView} horizontal showsHorizontalScrollIndicator={false}>
           {allCategories.map((category) => (
             <Pressable
               key={category}
-              style={[styles.categoryButton, 
+              style={[styles.categoryButton,
               selectedCategory === category && styles.selectedCategory,]}
               onPress={() => setSelectedCategory(category)}
             >
               <Text style={[styles.categoryButtonText,
-                selectedCategory === category && styles.selectedCategoryText
-               ]}>{category.charAt(0).toUpperCase() + category.slice(1)}</Text>
+              selectedCategory === category && styles.selectedCategoryText
+              ]}>{category.charAt(0).toUpperCase() + category.slice(1)}</Text>
             </Pressable>
           ))}
         </ScrollView>
       </View>
-      <FlashList
-        data={filteredProducts}
-        renderItem={renderProduct}
-        estimatedItemSize={200}
-        numColumns={2}
-        contentContainerStyle={{ padding: 8 }}
-        keyExtractor={(item) => item.id.toString()}
-        onRefresh={refetch}
-        refreshing={isRefetching}
-      />
+
+      {isLoading ? <ProductShimmerGrid /> :
+        <FlashList
+          data={filteredProducts}
+          renderItem={renderProduct}
+          estimatedItemSize={200}
+          numColumns={2}
+          contentContainerStyle={{ padding: 8 }}
+          keyExtractor={(item) => item.id.toString()}
+          onRefresh={refetch}
+          refreshing={isRefetching}
+        />
+
+      }
+
+
+
     </View>
   );
 }
@@ -82,10 +94,10 @@ const styles = StyleSheet.create({
   },
   categoryContainer: {
     height: 60,
-    zIndex:1,
+    zIndex: 1,
     boxShadow: '0 0 10px rgba(0, 0, 0, .3)',
   },
-  categoryScrollView:{
+  categoryScrollView: {
     paddingHorizontal: 10,
   },
   categoryButton: {
@@ -106,6 +118,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
   },
   selectedCategoryText: {
-    color:'#fff',
+    color: '#fff',
   }
 })
