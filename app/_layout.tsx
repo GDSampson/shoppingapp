@@ -23,6 +23,10 @@ export default function RootLayout() {
             headerTitleAlign: 'center',
           }}
         />
+        <Stack.Screen name="product/[id]" options={{
+          title: '',
+          headerBackTitle: 'Product', //ios only
+        }}/>
       </Stack>
     </QueryClientProvider>
   );
