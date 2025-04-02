@@ -24,7 +24,7 @@ const Page = () => {
     }
 
     if (!product) {
-        <Text>Product not found!</Text>
+        return <Text>Product not found!</Text>
     }
 
     const handleAddToCart = () => {
