@@ -3,19 +3,22 @@ import React from 'react'
 import useCartStore from '@/store/cartStore'
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '@/utils/colors';
+import { Link } from 'expo-router';
 
 const CartButton = () => {
     const { count } = useCartStore(); // getting the count from our cart state
 
     return (
-        <TouchableOpacity>
-            {count > 0 && (
-                <View style={styles.countContainer}>
-                    <Text style={styles.countText}>{count}</Text>
-                </View>
-            )}
-            <Ionicons name='cart' size={28} color={'#000'} />
-        </TouchableOpacity>
+        <Link href="/cart" asChild>
+            <TouchableOpacity>
+                {count > 0 && (
+                    <View style={styles.countContainer}>
+                        <Text style={styles.countText}>{count}</Text>
+                    </View>
+                )}
+                <Ionicons name='cart' size={28} color={'#000'} />
+            </TouchableOpacity>
+        </Link>
     )
 }
 
