@@ -6,7 +6,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 export interface CartState {
     products: Array<Product & { quantity: number }>;
     addProduct: (product: Product) => void;
-    reduceProudct: (product: Product) => void;
+    reduceProduct: (product: Product) => void;
     clearCart: () => void;
     total: number;
     count: number;
@@ -52,7 +52,7 @@ const useCartStore = create<CartState>()(
                     }
                 })
             },
-            reduceProudct: (product) => {
+            reduceProduct: (product) => {
                 set((state) => {
                     const newTotal = +state.total.toFixed(2) - +product.price.toFixed(2);
                     const newCount = state.count - 1;
