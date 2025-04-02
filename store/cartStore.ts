@@ -38,7 +38,7 @@ const useCartStore = create<CartState>()(
                             products: state.products.map((p) =>
                                 p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p,
                             ),
-                            total: newTotal,
+                            total: +newTotal.toFixed(2),
                             count: newCount,
                         }
 
@@ -46,7 +46,7 @@ const useCartStore = create<CartState>()(
                         return {
                             //otherwise add a product with quantity of 1
                             products: [...state.products, { ...product, quantity: 1 }],
-                            total: newTotal,
+                            total: +newTotal.toFixed(2),
                             count: newCount,
                         }
                     }
@@ -69,7 +69,7 @@ const useCartStore = create<CartState>()(
                             })
                             .filter((p) => p.quantity > 0),
 
-                        total: newTotal,
+                        total: +newTotal.toFixed(2),
                         count: newCount,
                     }
                 })
