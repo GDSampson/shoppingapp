@@ -8,10 +8,12 @@ import { Image } from 'expo-image';
 import { COLORS } from '@/utils/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import useCartStore from '@/store/cartStore';
 
 const Page = () => {
     const { id } = useLocalSearchParams();
     const {bottom} = useSafeAreaInsets();
+    const {addProduct} = useCartStore();
 
     //already have the id via params so grab the data with tanstack
     const { data: product, isLoading } = useQuery({
@@ -29,6 +31,7 @@ const Page = () => {
 
     const handleAddToCart = () => {
         console.log('add to cart')
+        addProduct(product);
     }
 
     return (

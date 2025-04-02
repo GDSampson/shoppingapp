@@ -1,3 +1,4 @@
+import CartButton from "@/components/CartButton";
 import { useReactQueryDevTools } from "@dev-plugins/react-query";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
@@ -21,6 +22,7 @@ export default function RootLayout() {
             title: 'Only Dans',
             headerShadowVisible: false,
             headerTitleAlign: 'center',
+            headerRight: () => <CartButton />
           }}
         />
         <Stack.Screen name="product/[id]" options={{
