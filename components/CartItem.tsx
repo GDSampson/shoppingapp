@@ -1,17 +1,41 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useRef } from 'react'
 import { Product } from '@/utils/api'
 import { Image } from 'expo-image'
 import useCartStore from '@/store/cartStore'
 import { Ionicons } from '@expo/vector-icons'
 import { COLORS } from '@/utils/colors'
+import ReanimatedSwipable, { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Reanimated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated'
 
 interface CartItemProps {
-    item: Product & {quantity: number}
+    item: Product & { quantity: number }
 }
 
-const CartItem = ({item}: CartItemProps) => {
-    const {addProduct, reduceProduct} = useCartStore();
+const LeftActions = (
+    progress: SharedValue<number>, // track animation progress
+    dragX: SharedValue<number>,  // track x axis drag distance
+    onShouldDelete: () => void,
+) => {
+    //make animation style that moves the icon based on drag
+    const styleAnimation = useAnimatedStyle(() => {
+        return {
+            transform: [{translateX: dragX.value - 100}],
+        };
+    })
+
+    return (
+        <Reanimated.View style={styleAnimation}>
+            <TouchableOpacity style={styles.leftAction} onPress={onShouldDelete}>
+                <Ionicons name='trash' size={24} color='#fff'/>
+            </TouchableOpacity> 
+        </Reanimated.View>
+    ) 
+}
+
+const CartItem = ({ item }: CartItemProps) => {
+    const { addProduct, reduceProduct } = useCartStore();
+    const reanimatedRef = useRef<SwipeableMethods>(null);
 
     const handleQuantityChanged = (type: 'increment' | 'decrement') => {
         if (type === 'increment') {
@@ -20,26 +44,43 @@ const CartItem = ({item}: CartItemProps) => {
             reduceProduct(item);
         }
     }
-  return (
-    <View style={styles.cartItemContainer}>
-      <Image source={{uri: item.image}} style={styles.image}/>
-      <View style={styles.itemContainer}>
-        <Text style={styles.cartItemName}>{item.title}</Text>
-        <Text>Price: ${item.price}</Text>
-      </View>
-      <View style={styles.quantityContainer}> 
-        <TouchableOpacity style={styles.quantityButton} onPress={() => handleQuantityChanged('decrement')}>
-            <Ionicons name='remove' size={24} color={'black'}/>
-        </TouchableOpacity>
 
-        <Text style={styles.cartItemQuantity}>{item.quantity}</Text>
+    const onShouldDelete = () => {
+        console.log('deleted');
+        reanimatedRef.current?.close();
+        for (let i = 0; i < item.quantity; i++) {
+            reduceProduct(item);
+        }
 
-        <TouchableOpacity style={styles.quantityButton} onPress={() => handleQuantityChanged('increment')}>
-            <Ionicons name='add' size={24} color={'black'}/>
-        </TouchableOpacity>
-      </View>
-    </View>
-  )
+    };
+
+    return (
+        <ReanimatedSwipable ref={reanimatedRef}
+            renderLeftActions={(progress, dragX) => LeftActions(progress, dragX, onShouldDelete)}
+            leftThreshold={50}
+            friction={2}
+            containerStyle={styles.swipeable}
+        >
+            <View style={styles.cartItemContainer}>
+                <Image source={{ uri: item.image }} style={styles.image} />
+                <View style={styles.itemContainer}>
+                    <Text style={styles.cartItemName}>{item.title}</Text>
+                    <Text>Price: ${item.price}</Text>
+                </View>
+                <View style={styles.quantityContainer}>
+                    <TouchableOpacity style={styles.quantityButton} onPress={() => handleQuantityChanged('decrement')}>
+                        <Ionicons name='remove' size={24} color={'black'} />
+                    </TouchableOpacity>
+
+                    <Text style={styles.cartItemQuantity}>{item.quantity}</Text>
+
+                    <TouchableOpacity style={styles.quantityButton} onPress={() => handleQuantityChanged('increment')}>
+                        <Ionicons name='add' size={24} color={'black'} />
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </ReanimatedSwipable>
+    )
 }
 
 export default CartItem
@@ -48,9 +89,9 @@ const styles = StyleSheet.create({
     cartItemContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap:20,
+        gap: 20,
         backgroundColor: '#fff',
-        marginBottom: 10,
+        height:80,
     },
     image: {
         width: 50,
@@ -81,5 +122,15 @@ const styles = StyleSheet.create({
         color: 'white',
         textAlign: 'center',
         borderRadius: 8,
+    },
+    swipeable: {
+        height: 80,
+    },
+    leftAction: {
+        backgroundColor: 'red',
+        width: 100,
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 })
