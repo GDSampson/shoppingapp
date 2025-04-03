@@ -37,14 +37,14 @@ const Page = () => {
                     ) : null}
                 </>
                 )}
-                ListFooterComponent={
-                    <Button
-                        title='Test Error!'
-                        onPress={() => {
-                            Sentry.captureException(new Error('First Error'));
-                        }}
-                    />
-                }
+                // ListFooterComponent={
+                //     <Button
+                //         title='Test Error!'
+                //         onPress={() => {
+                //             Sentry.captureException(new Error('First Error'));
+                //         }}
+                //     />
+                // }
             />
 
             <TouchableOpacity style={[styles.addToCartButton, { paddingBottom: Platform.select({ ios: bottom, android: 15 }) }]} onPress={handleCheckout}>
