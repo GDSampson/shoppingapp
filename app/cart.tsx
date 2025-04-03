@@ -27,6 +27,7 @@ const Page = () => {
             {products.length === 0 && <Text style={styles.emptyText}>No products in cart!</Text>}
             <FlatList
                 data={products}
+                contentContainerStyle={{gap: 10}}
                 renderItem={({ item }) => <CartItem item={item} />}
                 keyExtractor={(item) => item.id.toString()}
                 ListHeaderComponent={() => (<>
