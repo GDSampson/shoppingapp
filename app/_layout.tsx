@@ -7,6 +7,14 @@ import { storage } from "@/store/mmkv";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://03c3e963206190b6e4115dcb8af20d09@o4509089405927424.ingest.us.sentry.io/4509089416675328',
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,7 +24,7 @@ const queryClient = new QueryClient({
   },
 });
 
-export default function RootLayout() {
+export default Sentry.wrap(function RootLayout() {
   useReactQueryDevTools(queryClient);
   useMMKVDevTools({
     storage
@@ -53,4 +61,4 @@ export default function RootLayout() {
       </GestureHandlerRootView>
     </QueryClientProvider>
   );
-}
+});
