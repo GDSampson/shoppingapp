@@ -1,4 +1,4 @@
-import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Platform, ScrollView, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { Stack, useLocalSearchParams } from 'expo-router'
 import { useQuery } from '@tanstack/react-query';
@@ -32,11 +32,34 @@ const Page = () => {
   const handleAddToCart = () => {
     console.log('add to cart')
     addProduct(product);
-  }
+  };
+
+  const onShare = async () => {
+    console.log('shared');
+    const url = `onlydans://products/${product.id}`;
+    if (Platform.OS === 'ios') {
+      await Share.share({
+        url,
+        message: `Check out this product: ${product.id}`
+      })
+    } else {
+      await Share.share({
+        message: `Check out this product: ${product.id} \n\n${url}`
+      })
+    }
+  };
+
+  //npx uri-scheme open com.anonymous.shoppingapp://product/4 --android to hit the product on android
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: product?.title }} />
+      <Stack.Screen options={{ title: product?.title,
+        headerRight: () => (
+          <TouchableOpacity onPress={onShare}>
+            <Ionicons name='share-outline' size={24} color={COLORS.primary}/>
+          </TouchableOpacity>
+        ),
+       }} />
       <ScrollView>
         <Image source={{ uri: product?.image }} style={styles.image} contentFit="contain" />
         <View style={styles.content}>
